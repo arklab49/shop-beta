@@ -16,11 +16,15 @@ export class AppComponent {
   ) {
     auth.user$.subscribe(
       user => {
-        if (user) {
+        if (!user) return;
+        
           userService.save(user);
+
           const returnUrl = localStorage.getItem('returnUrl');
+          if(!returnUrl) return;
+
+          localStorage.removeItem('returnUrl');
           router.navigateByUrl(returnUrl);
-        }
       }
     );
   }
