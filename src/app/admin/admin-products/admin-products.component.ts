@@ -14,7 +14,6 @@ import { Subject } from 'rxjs/Subject';
 export class AdminProductsComponent implements OnInit, OnDestroy {
   products: any[] = [];
   subscription: Subscription;
-  items: Product[] = [];
   itemCount: number;
   dtTrigger: Subject<any> = new Subject();
   dtOptions: DataTables.Settings = {};
