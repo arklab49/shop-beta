@@ -11,7 +11,7 @@ import 'rxjs/add/operator/map'
   styleUrls: ['./admin-products.component.css']
 })
 export class AdminProductsComponent implements OnInit, OnDestroy {
-  products: any[];
+  products: Product[];
   filteredProducts: any[];
   subscription: Subscription;
 
