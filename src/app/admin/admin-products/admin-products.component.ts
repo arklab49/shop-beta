@@ -13,7 +13,6 @@ import { Subject } from 'rxjs/Subject';
 })
 export class AdminProductsComponent implements OnInit, OnDestroy {
   products: any[] = [];
-  filteredProducts: any[];
   subscription: Subscription;
   items: Product[] = [];
   itemCount: number;
@@ -22,12 +21,6 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
   constructor(private productService: ProductService) {
 
-  }
-
-  filter(query: string) {
-    this.filteredProducts = (query) ?
-      this.products.filter(p => p.value.title.toLowerCase().includes(query.toLowerCase())) :
-      this.products;
   }
 
   ngOnInit() {
