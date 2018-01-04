@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../product.service';
 import { Product } from '../../models/app-product';
+import { CategoryService } from '../category.service';
 
 @Component({
   selector: 'app-home',
@@ -9,8 +10,12 @@ import { Product } from '../../models/app-product';
 })
 export class HomeComponent implements OnInit {
   products: Product[] = [];
+  categories$;
 
-  constructor(private productService: ProductService) {
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService
+  ) {
     this.productService.getProducts()
       .map(actions => {
         return actions.map(action => ({ key: action.key, value: action.payload.val() }));
@@ -18,6 +23,8 @@ export class HomeComponent implements OnInit {
       .subscribe(products => {
         this.products = products;
       });
+
+      this.categories$ = this.categoryService.getCategories();
   }
 
   ngOnInit() {
