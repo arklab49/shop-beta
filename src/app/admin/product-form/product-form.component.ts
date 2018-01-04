@@ -11,24 +11,29 @@ import 'rxjs/add/operator/take';
 })
 export class ProductFormComponent implements OnInit {
   categories$;
-  product = { };
+  id;
+  product = {};
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    categoryService: CategoryService, 
+    categoryService: CategoryService,
     private productService: ProductService) {
     this.categories$ = categoryService.getCategories();
 
-    let id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.productService.getItem(id).take(1).subscribe(p => this.product = p.payload.val());
+    this.id = this.route.snapshot.paramMap.get('id');
+    if (this.id) {
+      this.productService.getItem(this.id).take(1).subscribe(p => this.product = p.payload.val());
     }
   }
 
   save(product) {
-    this.productService.create(product);
-    this.router.navigate(['/admin/products']);
+    if (this.id) {
+      this.productService.update(this.id, product)
+    } else {
+      this.productService.create(product);
+    }
+      this.router.navigate(['/admin/products']);
   }
 
   ngOnInit() {
