@@ -10,24 +10,34 @@ import { Product } from '../../../models/app-product';
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent {
   categories$;
   id;
-  product = {};
+  product: Product = {
+    key: '',
+    value: {
+      title: '',
+      price: null,
+      imageUrl: '',
+      category: ''
+    }
+  }
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     categoryService: CategoryService,
-    private productService: ProductService) {
+    private productService: ProductService
+  ) {
     this.categories$ = categoryService.getCategories();
-
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
       this.productService.getItem(this.id)
-      .take(1)
-      .subscribe(p => this.product = p.payload.val());
+        .subscribe(product => {
+          this.product.value = product.payload.val();
+        });
     }
+
   }
 
   save(product) {
@@ -44,9 +54,6 @@ export class ProductFormComponent implements OnInit {
 
     this.productService.delete(this.id);
     this.router.navigate(['/admin/products']);
-  }
-
-  ngOnInit() {
   }
 
 }
