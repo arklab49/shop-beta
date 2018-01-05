@@ -32,20 +32,20 @@ export class ShoppingCartService {
     return result.key;
   }
 
-  // async addToCart(product: Product) {
-  //   const cartId = await this.getOrCreateCartId();
-  //   const item$ = this.getItem(cartId, product.key);
-  //   item$.snapshotChanges().take(1).subscribe(item => {
-  //     const itemPayload = item.payload.val();
-  //     item$.update({product: product, quantity: (itemPayload.quantity || 0) + 1} );
-  //   });
-  // }
   async addToCart(product: Product) {
+    this.updateItemQuantity(product, 1);
+  }
+
+  async removeFromCart(product: Product) {
+    this.updateItemQuantity(product, -1);
+  }
+
+  private async updateItemQuantity(product: Product, change: number) {
     const cartId = await this.getOrCreateCartId();
     const item$ = this.getItem(cartId, product.key);
     item$.snapshotChanges().take(1).subscribe(item => {
       const itemPayload = item.payload.val();
-      item$.update({...product, quantity: (itemPayload ? itemPayload.quantity : 0) + 1} );
+      item$.update({ product: product, quantity: (itemPayload.quantity || 0) + change });
     });
   }
 }
