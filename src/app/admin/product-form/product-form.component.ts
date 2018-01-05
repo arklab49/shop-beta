@@ -3,6 +3,7 @@ import { CategoryService } from '../../category.service';
 import { ProductService } from '../../product.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/take';
+import { Product } from '../../../models/app-product';
 
 @Component({
   selector: 'app-product-form',
@@ -23,7 +24,9 @@ export class ProductFormComponent implements OnInit {
 
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
-      this.productService.getItem(this.id).take(1).subscribe(p => this.product = p.payload.val());
+      this.productService.getItem(this.id)
+      .take(1)
+      .subscribe(p => this.product = p.payload.val());
     }
   }
 
