@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { AppUser } from '../../models/app-user';
 import { ShoppingCartService } from '../shopping-cart.service';
+import { ShoppingCart } from '../../models/shopping-cart';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-bs-navbar',
@@ -10,7 +12,8 @@ import { ShoppingCartService } from '../shopping-cart.service';
 })
 export class BsNavbarComponent implements OnInit {
   appUser: AppUser;
-  shoppingCartItemCount: number;
+  cart;
+  subscription: Subscription;
 
   constructor(
     private auth: AuthService,
@@ -21,14 +24,11 @@ export class BsNavbarComponent implements OnInit {
 
   async ngOnInit() {
     this.auth.appUser$.subscribe(appUser => this.appUser = appUser);
-    let cart$ = await this.cartService.getCart();
-    cart$.snapshotChanges().subscribe(res => {
-      let cart = res.payload.val();
-      this.shoppingCartItemCount = 0;
-      for (let productId in cart.items) {
-        this.shoppingCartItemCount += cart.items[productId].quantity;
-      }
-    });
+
+    this.subscription = (await this.cartService.getCart())
+      .subscribe(cart => {
+        this.cart = cart;
+      });
   }
 
   logout() {
