@@ -1,31 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProductService } from '../product.service';
 import { Product } from '../../models/app-product';
 import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
+import { ShoppingCartService } from '../shopping-cart.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, OnDestroy {
 
   products: Product[] = [];
   filteredProducts: Product[];
   category;
+  cart: any = null;
+  subscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
-    private productService: ProductService
+    private productService: ProductService,
+    private cartService: ShoppingCartService
   ) {
+  }
+
+  async ngOnInit() {
+    this.subscription = (await this.cartService.getCart())
+      .snapshotChanges()
+      .subscribe(cart => {
+        this.cart = cart.payload.val();
+      }
+      );
+
     this.productService.getProducts()
       .map(actions => {
         return actions.map(action => ({ key: action.key, value: action.payload.val() }));
       })
       .switchMap(products => {
         this.products = products;
-        return route.queryParamMap;
+        return this.route.queryParamMap;
       }).
       subscribe(
       params => {
@@ -37,7 +52,8 @@ export class ProductsComponent implements OnInit {
       );
   }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }
